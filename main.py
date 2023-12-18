@@ -11,11 +11,11 @@ prefixos_validos = [
     "604", "320", "653", "630", "249", "184", "479", "376", "074", "217", "065", "600", "755", "746", 
     "151", "045", "623", "611", "643", "638", "747", "072", "250", "749", "366", "637", "464", "634", 
     "208", "655", "610", "370", "021", "073", "719", "078", "069", "070", "477", "487", "751", "062", 
-    "492", "488", "409", "230", "033", "8"
+    "492", "488", "409", "230", "033"
 ]
 
 def is_valid_codigo_de_barras(codigo):
-    return len(codigo) >= 25 and any(codigo.startswith(str(prefixo)) for prefixo in prefixos_validos)
+    return len(codigo) >= 44 and any(codigo.startswith(str(prefixo)) for prefixo in prefixos_validos)
 
 def listen():
     entrada_atual = ""
@@ -37,6 +37,7 @@ def listen():
                         }
                         result = rq.post(f'http://10.54.56.147:8001/api/codigo', json=data)
                         print(f'result: {result}')
+                        entrada_atual = ""
                         
                     else:
                         print("Código de barra inválido")
