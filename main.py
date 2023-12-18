@@ -13,53 +13,40 @@ prefixos_validos = [
     "208", "655", "610", "370", "021", "073", "719", "078", "069", "070", "477", "487", "751", "062", 
     "492", "488", "409", "230", "033", "8"
 ]
+
 def is_valid_codigo_de_barras(codigo):
     return len(codigo) >= 25 and any(codigo.startswith(str(prefixo)) for prefixo in prefixos_validos)
 
 def listen():
     entrada_atual = ""
-    tempo_anterior = time.time()
 
     def on_key_event(e):
-        nonlocal entrada_atual, tempo_anterior
+        nonlocal entrada_atual
 
         if e.event_type == keyboard.KEY_DOWN:
-            if e.name.isdigit() or e.name == 'enter':
+            if e.name.isdigit() or e.name == 'enter' or e.name == 'tab':
                 entrada_atual += e.name
-                tempo_anterior = time.time()
 
-                if e.name == 'enter':
+                if e.name == 'enter' or e.name == 'tab':
                     if is_valid_codigo_de_barras(entrada_atual):
-                        codigo_barra = re.sub("[^0-9]", "", entrada_atual)
-                        print("- Código de barras limpo:", codigo_barra)
+                        codigo_de_barra = re.sub("[^0-9]", "", entrada_atual)
+                        print(f'Código de barra lido: {codigo_de_barra}')
                         
                         data = {
-                            "codigo": codigo_barra
+                            "codigo": codigo_de_barra
                         }
                         result = rq.post(f'http://10.54.56.147:8000/api/codigo', json=data)
                         print(f'result: {result}')
                         
                     else:
-                        print("- Código de barras inválido")
+                        print("Código de barra inválido")
                     entrada_atual = ""
 
     keyboard.hook(on_key_event)
 
     while True:
-        if time.time() - tempo_anterior > 1.5:
-            if entrada_atual:
-                print("- Código de barras lido:", entrada_atual)
-                entrada_atual = ""
         time.sleep(0.1)
 
 thread = Thread(target=listen)
-
-try:
-    thread.start()
-
-    thread.join()
-
-except KeyboardInterrupt:
-    thread.join()
-
-    print("Programa encerrado.")
+thread.start()
+thread.join()
