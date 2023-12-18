@@ -35,7 +35,7 @@ def listen():
                         data = {
                             "codigo": codigo_de_barra
                         }
-                        result = rq.post(f'http://10.54.56.147:8000/api/codigo', json=data)
+                        result = rq.post(f'http://10.54.56.147:8001/api/codigo', json=data)
                         print(f'result: {result}')
                         
                     else:
